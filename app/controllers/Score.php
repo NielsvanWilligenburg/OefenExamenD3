@@ -36,16 +36,54 @@ class Score extends Controller
     public function overzicht()
     {
 
-        
+        if($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+            var_dump($_POST);
+        }
+
+        $scores = $this->scoreModel->getScoreByGroep();
+
+        $dates = $this->scoreModel->getResDate();
+
+
+        $RowDates = '';
+
+        foreach ($dates as $date) {
+            $date2 = date_create($date->datum);
+            $result = $date2->format('d/m/Y');
+            $RowDates .= "<option value='$result'>$result</option>";
+        }
+
+        $rows = '';
+
+        foreach ($scores as $score) {
+
+            $rows .= "<tr>
+                        <td>$score->Voornaam</td>
+                        <td>$score->Tussenvoegsel</td>
+                        <td>$score->Achternaam</td>
+                        <td>$score->Aantalpunten</td>
+                        <td>$score->Datum</td>
+                        </tr>";
+        }
+
+        $data = [
+            'title' => 'Overzicht Uitslag',
+            'rows' => $rows,
+            'dates' => $RowDates
+        ];
+
+        $this->view('score/overzicht', $data);
     }
 
     public function update($id = null)
     {
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-            if($_POST['score'] > 300) {
+            if ($_POST['score'] > 300) {
                 echo 'Aantal punten is niet geldig, voer een waarde in kleiner of gelijk aan 300';
                 header('refresh: 3; url=' . URLROOT . 'score/update/' . $id);
                 exit;
@@ -58,9 +96,9 @@ class Score extends Controller
             ];
 
             $this->scoreModel->updateScore($data);
-            
 
-            if($this->scoreModel->updateScore($data)) {
+
+            if ($this->scoreModel->updateScore($data)) {
                 echo 'Aantal punten is gewijzigd';
                 header('refresh: 3; url=' . URLROOT . 'score/');
                 exit;

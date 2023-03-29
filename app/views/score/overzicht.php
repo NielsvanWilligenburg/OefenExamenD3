@@ -1,7 +1,11 @@
 <h1><?php echo $data['title'] ?></h1>
-<select name="Datum" id="">
-<option value="">24-03-2032</option>
-</select>
+<form action="" method="post">
+    <select name="Datum" id="">
+        <option value=""><?php echo $data['dates'] ?></option>
+    </select>
+    <button>Tonen</button>
+</form>
+
 <hr>
 
 <table>
@@ -11,10 +15,10 @@
             <th>Tussenvoegsel</th>
             <th>Achternaam</th>
             <th>Aantal punten</th>
-            <th>Datum</th>  
+            <th>Datum</th>
         </tr>
-        <tbody>
-            <?php echo $data['rows'] ?>
-        </tbody>
+    <tbody>
+        <?php echo $data['rows'] ?>
+    </tbody>
     </thead>
 </table>
