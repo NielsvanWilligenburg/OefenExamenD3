@@ -36,10 +36,50 @@ class Score extends Controller
     public function overzicht()
     {
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-            var_dump($_POST);
+            $date = DateTime::createFromFormat('d/m/Y', $_POST['Datum']);
+            $formattedDate = $date->format('Y/m/d');
+
+
+            $date = [
+                'date' => $formattedDate
+            ];
+
+            $responses = $this->scoreModel->getScoreByDate($date);
+
+            $dates = $this->scoreModel->getResDate();
+
+
+        $RowDates = '';
+
+        foreach ($dates as $date) {
+            $date2 = date_create($date->datum);
+            $result = $date2->format('d/m/Y');
+            $RowDates .= "<option value='$result'>$result</option>";
+        }
+
+            $rows = '';
+
+            foreach ($responses as $response) {
+
+                $rows .= "<tr>
+                        <td>$response->Voornaam</td>
+                        <td>$response->Tussenvoegsel</td>
+                        <td>$response->Achternaam</td>
+                        <td>$response->Aantalpunten</td>
+                        <td>$response->Datum</td>
+                        </tr>";
+            }
+
+            $data = [
+                'title' => 'Overzicht Uitslag',
+                'rows' => $rows,
+                'dates' => $RowDates
+            ];
+
+            $this->view('score/overzicht', $data);
         }
 
         $scores = $this->scoreModel->getScoreByGroep();
