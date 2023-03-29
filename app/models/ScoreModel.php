@@ -39,4 +39,17 @@ class ScoreModel
         $this->db->bind(':id', $id);
         return $this->db->single();
     }
+
+    public function updateScore($data)
+    {
+        $this->db->query('UPDATE `uitslag` SET Aantalpunten = :score WHERE id = :id');
+        $this->db->bind(':id', $data['id']);
+        $this->db->bind(':score', $data['score']);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

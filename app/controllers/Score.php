@@ -12,8 +12,6 @@ class Score extends Controller
     {
         $scores = $this->scoreModel->getScore();
 
-        var_dump($scores);
-
         $rows = '';
 
         foreach ($scores as $score) {
@@ -38,41 +36,38 @@ class Score extends Controller
     public function overzicht()
     {
 
-        $scores = $this->scoreModel->getScore();
-
-        $dates = $this->scoreModel->getResDate();
-
-        var_dump($dates);
-
-        foreach ($dates as $date) {
-            $date = $date->datum;
-
-            echo "<option value='$date'>$date</option>";
-        }
-
-        $rows = '';
-
-        foreach ($scores as $score) {
-
-            $rows .= "<tr>
-                        <td>$score->Voornaam</td>
-                        <td>$score->Tussenvoegsel</td>
-                        <td>$score->Achternaam</td>
-                        <td>$score->Aantalpunten</td>
-                        <td>$score->Datum</td>
-                        </tr>";
-        }
-
-        $data = [
-            'title' => 'Overzicht Uitslag',
-            'rows' => $rows
-        ];
-
-        $this->view('score/overzicht', $data);
+        
     }
 
     public function update($id = null)
     {
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+            if($_POST['score'] > 300) {
+                echo 'Aantal punten is niet geldig, voer een waarde in kleiner of gelijk aan 300';
+                header('refresh: 3; url=' . URLROOT . 'score/update/' . $id);
+                exit;
+            }
+
+            // Maak een array aan met de data die in de database moet komen
+            $data = [
+                'id' => $id,
+                'score' => $_POST['score']
+            ];
+
+            $this->scoreModel->updateScore($data);
+            
+
+            if($this->scoreModel->updateScore($data)) {
+                echo 'Aantal punten is gewijzigd';
+                header('refresh: 3; url=' . URLROOT . 'score/');
+                exit;
+            } else {
+                die('Er is iets fout gegaan');
+            }
+        }
 
         if ($id == null) {
             header('location: ' . URLROOT . 'score');
@@ -81,8 +76,11 @@ class Score extends Controller
 
         $score = $this->scoreModel->getScoreById($id);
 
-        var_dump($score);
+        $data = [
+            'title' => 'Detail Uitslag',
+            'score' => $score->Aantalpunten
+        ];
 
-        $this->view('score/update');
+        $this->view('score/update', $data);
     }
 }
