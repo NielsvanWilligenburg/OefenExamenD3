@@ -39,6 +39,12 @@ class Score extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
+            if($_POST['Datum'] == '') {
+                echo 'Selecteer een datum';
+                header('refresh: 3; url=' . URLROOT . 'score/overzicht');
+                exit;
+            }
+
             $date = DateTime::createFromFormat('d/m/Y', $_POST['Datum']);
             $formattedDate = $date->format('Y/m/d');
 
@@ -54,10 +60,12 @@ class Score extends Controller
 
         $RowDates = '';
 
+
         foreach ($dates as $date) {
             $date2 = date_create($date->datum);
             $result = $date2->format('d/m/Y');
             $RowDates .= "<option value='$result'>$result</option>";
+
         }
 
             $rows = '';

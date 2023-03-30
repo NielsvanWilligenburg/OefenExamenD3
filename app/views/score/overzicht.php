@@ -1,7 +1,8 @@
 <h1><?php echo $data['title'] ?></h1>
 <form action="" method="post">
     <select name="Datum" aria-placeholder="ff">
-        <option value=""><option value="" disabled selected>Datum</option><?php echo $data['dates'] ?></option>
+        <option disabled selected value>Datum</option>`
+        <?php echo $data['dates'] ?>
     </select>
     <button>Tonen</button>
 </form>
